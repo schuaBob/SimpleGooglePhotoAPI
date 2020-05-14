@@ -9,6 +9,8 @@ autopep8 = "*"
 [packages]
 django = "*"
 djangorestframework = "*"
+google-api-python-client = "*"
+authlib = "*"
 
 [requires]
 python_version = "3.7"
