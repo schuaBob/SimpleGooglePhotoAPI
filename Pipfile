@@ -11,6 +11,7 @@ django = "*"
 djangorestframework = "*"
 google-api-python-client = "*"
 authlib = "*"
+google-auth-oauthlib = "*"
 
 [requires]
 python_version = "3.7"
