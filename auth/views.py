@@ -6,7 +6,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from google.oauth2 import credentials
 from authlib.integrations.requests_client import OAuth2Session
-# Create your views here.
+
 
 
 class index(APIView):
@@ -35,6 +35,7 @@ class index(APIView):
             scope=data.get('scopes')
         )
         # get https://developers.google.com/identity/protocols/oauth2/openid-connect#exchangecode
-        authServerResponse = oauth.fetch_token(url=appSecret.get('token_uri'),grant_type="authorization_code",code=data.get('serverAuthCode'),redirect_uri="http://localhost:3000/oauth/callback")
-        print(authServerResponse)
+        tokens = oauth.fetch_token(url=appSecret.get('token_uri'),grant_type="authorization_code",code=data.get('serverAuthCode'),redirect_uri="http://localhost:3000/oauth/callback")
+        print(tokens)
+        credent = credentials.Credentials(tokens.get('access_token'),refresh_token=tokens.get('refresh_token'),token_uri=appSecret.get('token_uri'),client_id=appSecret.get('client_id'),client_secret=appSecret.get('client_secret'))
         return Response(1)
