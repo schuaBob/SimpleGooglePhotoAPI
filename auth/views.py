@@ -58,24 +58,32 @@ class auth(APIView):
             tokens = oauth.fetch_token(url=TOKEN_URI, grant_type="authorization_code",
                                        code=data['serverAuthCode'], redirect_uri="http://localhost:3000/oauth/callback")
             print(tokens)
-            newUser = UserSerializer(data={'userId': idinfo['sub'],
-                                           'accessToken': tokens['access_token'],
-                                           'expiresIn': tokens['expires_in'],
-                                           'refreshToken': tokens['refresh_token']})
+            newUser = UserSerializer(data={
+                'userId': idinfo['sub'],
+                'accessToken': tokens['access_token'],
+                'expiresIn': tokens['expires_in'],
+                'refreshToken': tokens['refresh_token']
+            })
             if newUser.is_valid():
                 newUser.save()
                 print("save successfully")
             user = User.objects.filter(userId=idinfo['sub'])
-        user= user.values()[0]
-        print(user)
-        credent = credentials.Credentials(user['accessToken'], refresh_token=user['refreshToken'],
+        userData = user.values()[0]
+        print(userData)
+        credent = credentials.Credentials(userData['accessToken'], refresh_token=userData['refreshToken'],
                                           token_uri=TOKEN_URI, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 
-        t = time.mktime(user['lastUpdateTime'].timetuple())+user['expiresIn']
+        t = time.mktime(
+            userData['lastUpdateTime'].timetuple())+userData['expiresIn']
         credent.expiry = datetime.datetime.fromtimestamp(t)
         if credent.expired:
             try:
                 credent.refresh(requests.Request())
+                UserSerializer(user, data={
+                    'accessToken': credent.token,
+                    'expiresIn': tokens['expires_in'],
+                    'refreshToken': tokens['refresh_token']
+                })
             except RefreshError:
                 print("refresh error")
                 return Response({"error": "refresh error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
