@@ -119,11 +119,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+# set how to show
 STATIC_URL = '/static/'
-
+# static location
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static')
+]
 REST_FRAMEWORK={
     'UNAUTHENTICATED_USER':None,
     'DEFAULT_RENDERER_CLASSES':[
         'rest_framework.renderers.JSONRenderer',
     ]
 }
+# set for image store
+# show this
+MEDIA_URL = '/images/'
+# store here
+MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
